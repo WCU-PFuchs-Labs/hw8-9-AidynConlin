@@ -1,4 +1,4 @@
-Node.java- public class Node implements Cloneable {
+public class Node implements Cloneable {
 
     private double value;     // placeholder field
     private Node left;

@@ -1,4 +1,4 @@
-DataRow.java-public class DataRow {
+public class DataRow {
     private double x;
     private double y;
 

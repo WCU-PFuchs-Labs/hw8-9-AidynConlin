@@ -1,4 +1,4 @@
-GPTree.java - import java.util.Random;
+import java.util.Random;
 
 public class GPTree implements Comparable<GPTree>, Cloneable {
 
