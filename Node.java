@@ -1,36 +1,45 @@
-public class Node {
+Node.java- public class Node implements Cloneable {
 
-    public enum Type { VAR, CONST, OP }
+    private double value;     // placeholder field
+    private Node left;
+    private Node right;
 
-    public enum OpType { ADD, SUB, MUL, DIV }
-
-    public Type type;
-    public int varIndex;
-    public double constValue;
-    public OpType op;
-    public Node left, right;
-
-    public Node(Type t) {
-        type = t;
+    public Node() {
+        this.value = 0.0;
+        this.left = null;
+        this.right = null;
     }
 
-    public static Node var(int index) {
-        Node n = new Node(Type.VAR);
-        n.varIndex = index;
-        return n;
+    public Node(double value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
     }
 
-    public static Node constant(double v) {
-        Node n = new Node(Type.CONST);
-        n.constValue = v;
-        return n;
+    public Node(Node other) {
+        this.value = other.value;
+        this.left = (other.left != null) ? new Node(other.left) : null;
+        this.right = (other.right != null) ? new Node(other.right) : null;
     }
 
-    public static Node op(OpType o, Node l, Node r) {
-        Node n = new Node(Type.OP);
-        n.op = o;
-        n.left = l;
-        n.right = r;
-        return n;
+    @Override
+    public Object clone() {
+        return new Node(this);
     }
+
+    public double eval(double x) {
+        // placeholder eval function you can replace with real operators
+        return value; 
+    }
+    @Override
+public String toString() {
+
+    return "(" + value + ")";
+}
+
+
+    public Node getLeft() { return left; }
+    public Node getRight() { return right; }
+    public void setLeft(Node n) { left = n; }
+    public void setRight(Node n) { right = n; }
 }

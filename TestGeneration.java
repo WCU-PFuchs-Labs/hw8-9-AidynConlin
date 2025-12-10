@@ -1,25 +1,37 @@
+TestGeneration.java-import java.util.ArrayList;
+import java.util.Scanner;    
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
 public class TestGeneration {
-    public static void main(String[] args) throws Exception {
 
-        if (args.length < 1) {
-            System.out.println("Usage: java TestGeneration <csvfile>");
-            return;
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        String fileName = sc.nextLine().trim();
+        sc.close();
+
+        Generation gen = new Generation(500, 6, fileName);
+
+        gen.evalAll();
+
+        gen.printBestTree();
+        gen.printBestFitness();
+
+        ArrayList<GPTree> topTenTrees = gen.getTopTen();
+
+        System.out.print("Top Ten Fitness Values: ");
+
+        for (int i = 0; i < topTenTrees.size(); i++) {
+            double fitnessValue = topTenTrees.get(i).getFitness();
+            System.out.printf("%.2f", fitnessValue);
+
+            if (i < topTenTrees.size() - 1) {
+                System.out.print(", ");
+            }
         }
 
-        DataSet ds = DataSet.loadCSV(args[0]);
-
-        Generation g = new Generation(50, 5, ds);
-
-        for (int i = 0; i < 30; i++) {
-            g.evalAll();
-            g.sort();
-
-            System.out.println("Generation " + i);
-            System.out.println("Best fitness: " + g.best().fitness);
-            System.out.println("Best tree: " + g.best());
-            System.out.println();
-
-            g = g.nextGen();
-        }
+        System.out.println();
     }
 }

@@ -1,61 +1,59 @@
-import java.util.*;
+Generation.java- import java.util.Random;
+import java.util.Arrays;
+import java.util.ArrayList;
+
 
 public class Generation {
+    private GPTree[] trees;
+    private DataSet data;
+    private Random rand = new Random();
 
-    private ArrayList<GPTree> pop = new ArrayList<>();
-    private int maxDepth;
-    private int populationSize;
-    private DataSet ds;
-
-    public Generation(int size, int maxDepth, DataSet ds) {
-        this.populationSize = size;
-        this.maxDepth = maxDepth;
-        this.ds = ds;
-
-        for (int i = 0; i < size; i++)
-            pop.add(new GPTree(maxDepth, ds.getNumVars()));
+    public Generation(int size, int maxDepth, String fileName) {
+        data = new DataSet(fileName);
+        trees = new GPTree[size];
+        for (int i = 0; i < size; i++) {
+            trees[i] = new GPTree(maxDepth, rand); // assuming GPTree has such a constructor
+        }
     }
 
     public void evalAll() {
-        for (GPTree t : pop)
-            t.evalFitness(ds);
-    }
-
-    public void sort() {
-        Collections.sort(pop);
-    }
-
-    public GPTree best() {
-        return pop.get(0);
-    }
-
-    public Generation nextGen() {
-        evalAll();
-        sort();
-
-        Generation next = new Generation(0, maxDepth, ds);
-
-        int eliteCount = Math.max(1, populationSize / 20); // top 5%
-
-        // Elitism
-        for (int i = 0; i < eliteCount; i++)
-            next.pop.add(pop.get(i).clone());
-
-        // Fill remainder with mutated clones
-        while (next.pop.size() < populationSize) {
-            GPTree parent = pop.get(Genner.randInt(0, eliteCount - 1)).clone();
-            parent.mutate();
-            next.pop.add(parent);
+        for (GPTree tree : trees) {
+            tree.evalFitness(data);
         }
-
-        return next;
+        Arrays.sort(trees);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (GPTree t : pop)
-            sb.append(String.format("Fit: %.4f  Tree: %s\n", t.fitness, t));
-        return sb.toString();
+    public ArrayList<GPTree> getTopTen() {
+        ArrayList<GPTree> top = new ArrayList<>();
+        for (int i = 0; i < 10 && i < trees.length; i++) {
+            top.add(trees[i]);
+        }
+        return top;
+    }
+
+    public void printBestFitness() {
+        System.out.printf("Best Fitness: %.2f%n", trees[0].getFitness());
+    }
+
+    public void printBestTree() {
+        System.out.println("Best Tree: " + trees[0]);
+    }
+
+    // Checkpoint 2
+    public void evolve() {
+        GPTree[] nextGen = new GPTree[trees.length];
+        for (int i = 0; i < trees.length / 2; i++) {
+            // Pick two parents among more fit ones
+            GPTree parent1 = trees[rand.nextInt(Math.max(1, trees.length / 4))];
+            GPTree parent2 = trees[rand.nextInt(Math.max(1, trees.length / 4))];
+
+            // Clone and crossover
+            GPTree child1 = (GPTree) parent1.clone();
+            GPTree child2 = (GPTree) parent2.clone();
+            child1.crossover(child2); // assuming GPTree has crossover()
+            nextGen[2*i] = child1;
+            nextGen[2*i + 1] = child2;
+        }
+        trees = nextGen;
     }
 }

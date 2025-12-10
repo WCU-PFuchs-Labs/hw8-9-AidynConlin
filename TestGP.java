@@ -1,35 +1,51 @@
+TestGP.java-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.ArrayList;
+
 public class TestGP {
-    public static void main(String[] args) throws Exception {
 
-        if (args.length < 1) {
-            System.out.println("Usage: java TestGP <csvfile>");
-            return;
+    public static void main(String[] args) {
+
+        String fileName;
+
+        if (args.length >= 1) {
+            fileName = args[0];
+        } 
+        else {
+            Scanner keyboard = new Scanner(System.in);
+            System.out.println("Enter the data file name:");
+            fileName = keyboard.nextLine();
         }
 
-        DataSet ds = DataSet.loadCSV(args[0]);
+        int generationSize = 500;
+        int maxDepth = 6;
 
-        double bestEver = Double.MAX_VALUE;
-        double totalBest = 0;
+        Generation gen = new Generation(generationSize, maxDepth, fileName);
 
-        int runs = 10;
+        int totalGenerations = 50;
 
-        for (int r = 1; r <= runs; r++) {
-            Generation g = new Generation(50, 5, ds);
+        for (int g = 1; g <= totalGenerations; g++) {
 
-            for (int gen = 0; gen < 20; gen++)
-                g = g.nextGen();
+            gen.evalAll();
 
-            g.evalAll();
-            g.sort();
-            double best = g.best().fitness;
+            System.out.println("Generation " + g + ":");
+            gen.printBestTree();
+            gen.printBestFitness();
+            ArrayList<GPTree> topTen = gen.getTopTen();
+            System.out.print("Top Ten Fitness Values: ");
+            for (int i = 0; i < topTen.size(); i++) {
+                double fit = topTen.get(i).getFitness();
+                System.out.printf("%.2f", fit);
+                if (i < topTen.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
 
-            System.out.println("Run " + r + ": " + best);
+            System.out.println("------");
 
-            bestEver = Math.min(bestEver, best);
-            totalBest += best;
+            gen.evolve();
         }
-
-        System.out.println("\nBest overall: " + bestEver);
-        System.out.println("Average best: " + (totalBest / runs));
     }
 }

@@ -1,22 +1,12 @@
-public class DataRow {
+DataRow.java-public class DataRow {
+    private double x;
+    private double y;
 
-    private double[] inputs;
-    private double target;
-
-    public DataRow(double[] inputs, double target) {
-        this.inputs = inputs;
-        this.target = target;
+    public DataRow(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public double get(int index) {
-        return inputs[index];
-    }
-
-    public double getTarget() {
-        return target;
-    }
-
-    public int size() {
-        return inputs.length;
-    }
+    public double getX() { return x; }
+    public double getY() { return y; }
 }
